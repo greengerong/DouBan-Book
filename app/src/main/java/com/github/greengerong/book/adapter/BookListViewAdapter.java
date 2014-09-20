@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.github.greengerong.book.R;
 import com.github.greengerong.book.service.ImageLoader;
+import com.github.greengerong.book.service.ViewHelper;
 
 import org.json.JSONObject;
 
@@ -61,9 +62,10 @@ public class BookListViewAdapter extends BaseAdapter {
         }
 
         final View bookItemView = LayoutInflater.from(context).inflate(R.layout.book_item, viewGroup, false);
-        final ImageView image = (ImageView) bookItemView.findViewById(R.id.image);
-        final TextView bookName = (TextView) bookItemView.findViewById(R.id.bookName);
-        final RatingBar rating = (RatingBar) bookItemView.findViewById(R.id.rating);
+        final ViewHelper viewHelper = new ViewHelper(bookItemView);
+        final ImageView image = viewHelper.findViewById(R.id.image);
+        final TextView bookName = viewHelper.findViewById(R.id.bookName);
+        final RatingBar rating = viewHelper.findViewById(R.id.rating);
         final TextView info = (TextView) bookItemView.findViewById(R.id.info);
         final JSONObject book = (JSONObject) books.optJSONArray("books").opt(i);
         image.setImageBitmap(defaultImageBitmap);

@@ -3,8 +3,6 @@ package com.github.greengerong.book.service;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.apache.http.client.HttpClient;
-
 /**
  * ***************************************
  * *
@@ -15,7 +13,7 @@ import org.apache.http.client.HttpClient;
  * *
  * ****************************************
  */
-class HttpBookDataSource {
+public class HttpBookDataSource {
 
     public static final String DOU_BAN_BOOKS_API = "https://api.douban.com/v2/book/search?q=%E8%AE%A1%E7%AE%97%E6%9C%BA";
     private static AsyncHttpClient asyncHttpClient;
