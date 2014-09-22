@@ -3,6 +3,7 @@ package com.github.greengerong.book.service;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
@@ -23,6 +24,7 @@ import java.net.URL;
  * ****************************************
  */
 public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
+    private static final String TAG = GetBooksAsyncTask.class.getName();
     private final ListView bookList;
     private final Activity context;
 
@@ -40,7 +42,7 @@ public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
                 return new JSONObject(responseText);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
 
         return null;

@@ -21,7 +21,7 @@ import java.net.URL;
  * ****************************************
  */
 public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
-    public static final String TAG = ImageLoader.class.getName();
+    private static final String TAG = ImageLoader.class.getName();
     private ImageView imageView;
 
     public ImageLoader(ImageView imageView) {

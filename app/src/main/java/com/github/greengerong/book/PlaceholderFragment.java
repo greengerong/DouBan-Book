@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookImageOnScrollListener;
 import com.github.greengerong.book.service.GetBooksAsyncTask;
+import com.github.greengerong.book.service.ViewHelper;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -28,7 +29,7 @@ public class PlaceholderFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final Activity context = getActivity();
-        final ListView bookList = (ListView) rootView.findViewById(R.id.bookList);
+        final ListView bookList = new ViewHelper(rootView).findViewById(R.id.bookList);
         new GetBooksAsyncTask(bookList, context).execute("https://api.douban.com/v2/book/search?q=%E7%BC%96%E7%A8%8B");
 //        bookList.setOnScrollListener(onScrollListener);
         return rootView;

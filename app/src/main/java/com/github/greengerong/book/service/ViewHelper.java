@@ -2,7 +2,7 @@ package com.github.greengerong.book.service;
 
 import android.view.View;
 
-import com.github.greengerong.book.R;
+import java.lang.ref.WeakReference;
 
 /**
  * ***************************************
@@ -15,24 +15,32 @@ import com.github.greengerong.book.R;
  * ****************************************
  */
 public final class ViewHelper {
-    private View view;
+    private WeakReference<View> view;
 
     public ViewHelper(View view) {
-        this.view = view;
+        this.view = new WeakReference<View>(view);
     }
 
     public <T> T findViewById(int id) {
-        final View viewById = view.findViewById(id);
+        final View viewById = checkIsActive(view).get().findViewById(id);
         return viewById == null ? null : (T) viewById;
     }
 
     public <T> T getTag() {
-        final Object tag = view.getTag();
+        final Object tag = checkIsActive(view).get().getTag();
         return tag == null ? null : (T) tag;
     }
 
     public <T> T getTag(int key) {
-        final Object tag = view.getTag(key);
+        final Object tag = checkIsActive(view).get().getTag(key);
         return tag == null ? null : (T) tag;
+    }
+
+    private WeakReference<View> checkIsActive(WeakReference<View> weakReference) {
+        if (weakReference.isEnqueued()) {
+            throw new RuntimeException("This reference was enqueued!");
+        }
+
+        return weakReference;
     }
 }
