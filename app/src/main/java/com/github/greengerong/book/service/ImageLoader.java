@@ -21,6 +21,7 @@ import java.net.URL;
  * ****************************************
  */
 public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
+    public static final String TAG = ImageLoader.class.getName();
     private ImageView imageView;
 
     public ImageLoader(ImageView imageView) {
@@ -33,7 +34,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             try {
                 return BitmapFactory.decodeStream(new URL(urls[0]).openStream());
             } catch (IOException e) {
-                Log.e(ImageLoader.class.getName(), e.getMessage());
+                Log.e(TAG, e.getMessage());
             }
         }
         return null;

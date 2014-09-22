@@ -10,21 +10,16 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookImageOnScrollListener;
-import com.github.greengerong.book.service.BookDataSource;
-import com.github.greengerong.book.adapter.BookListViewAdapter;
-
-import org.json.JSONObject;
+import com.github.greengerong.book.service.GetBooksAsyncTask;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class PlaceholderFragment extends Fragment {
 
-    private final BookDataSource bookDataSource;
     private final AbsListView.OnScrollListener onScrollListener;
 
     public PlaceholderFragment() {
-        bookDataSource = new BookDataSource();
         onScrollListener = new BookImageOnScrollListener();
     }
 
@@ -32,11 +27,9 @@ public class PlaceholderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        Activity context = getActivity();
-        final JSONObject books = bookDataSource.getBooks(context);
+        final Activity context = getActivity();
         final ListView bookList = (ListView) rootView.findViewById(R.id.bookList);
-        bookList.setAdapter(new BookListViewAdapter(context, books));
+        new GetBooksAsyncTask(bookList, context).execute("https://api.douban.com/v2/book/search?q=%E7%BC%96%E7%A8%8B");
 //        bookList.setOnScrollListener(onScrollListener);
         return rootView;
     }

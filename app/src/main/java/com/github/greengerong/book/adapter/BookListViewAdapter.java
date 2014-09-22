@@ -56,28 +56,64 @@ public class BookListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view != null) {
-            return view;
+    public View getView(int i, View bookItemView, ViewGroup viewGroup) {
+
+        if (bookItemView == null) {
+            bookItemView = LayoutInflater.from(context).inflate(R.layout.book_item, viewGroup, false);
+            final ViewHelper viewHelper = new ViewHelper(bookItemView);
+            ViewHolder viewHolder = new ViewHolder(viewHelper.<TextView>findViewById(R.id.bookName),
+                    viewHelper.<RatingBar>findViewById(R.id.rating),
+                    viewHelper.<ImageView>findViewById(R.id.image),
+                    viewHelper.<TextView>findViewById(R.id.info));
+            bookItemView.setTag(viewHolder);
         }
 
-        final View bookItemView = LayoutInflater.from(context).inflate(R.layout.book_item, viewGroup, false);
-        final ViewHelper viewHelper = new ViewHelper(bookItemView);
-        final ImageView image = viewHelper.findViewById(R.id.image);
-        final TextView bookName = viewHelper.findViewById(R.id.bookName);
-        final RatingBar rating = viewHelper.findViewById(R.id.rating);
-        final TextView info = (TextView) bookItemView.findViewById(R.id.info);
+        ViewHolder viewHolder = (ViewHolder) bookItemView.getTag();
+
         final JSONObject book = (JSONObject) books.optJSONArray("books").opt(i);
-        image.setImageBitmap(defaultImageBitmap);
-        image.setTag(book.optJSONObject("images").optString("small"));
-        new ImageLoader(image).execute(book.optJSONObject("images").optString("small"));
-        bookName.setText(book.optString("title"));
-        rating.setRating((float) book.optJSONObject("rating").optDouble("average") / 2);
-        info.setText(TextUtils.join(" ", new String[]{
+        viewHolder.getImage().setImageBitmap(defaultImageBitmap);
+        viewHolder.getImage().setTag(book.optJSONObject("images").optString("small"));
+        new ImageLoader(viewHolder.getImage()).execute(book.optJSONObject("images").optString("small"));
+        viewHolder.getBookName().setText(book.optString("title"));
+        viewHolder.getRating().setRating((float) book.optJSONObject("rating").optDouble("average") / 2);
+        viewHolder.getInfo().setText(TextUtils.join(" ", new String[]{
                 book.optJSONArray("author").optString(0),
                 book.optString("publisher"),
                 book.optString("pubdate")
         }));
+
         return bookItemView;
     }
+
+    private static class ViewHolder {
+        private TextView bookName;
+        private RatingBar rating;
+        private ImageView image;
+        private TextView info;
+
+        public ViewHolder(TextView bookName, RatingBar rating, ImageView image, TextView info) {
+
+            this.bookName = bookName;
+            this.rating = rating;
+            this.image = image;
+            this.info = info;
+        }
+
+        public TextView getBookName() {
+            return bookName;
+        }
+
+        public RatingBar getRating() {
+            return rating;
+        }
+
+        public ImageView getImage() {
+            return image;
+        }
+
+        public TextView getInfo() {
+            return info;
+        }
+    }
 }
+
