@@ -1,5 +1,6 @@
 package com.github.greengerong.book.adapter;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.widget.AbsListView;
 import android.widget.ImageView;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import com.github.greengerong.book.R;
 import com.github.greengerong.book.service.ImageLoader;
 import com.github.greengerong.book.service.ViewHelper;
+import com.github.greengerong.book.utils.delegate.Action1;
 
 /**
  * ***************************************
@@ -27,7 +29,11 @@ public class BookImageOnScrollListener implements AbsListView.OnScrollListener {
         if (scrollState == SCROLL_STATE_IDLE) {
             final ImageView image = new ViewHelper(view).findViewById(R.id.image);
             if (image.getTag() != null && !TextUtils.isEmpty((String) image.getTag())) {
-                new ImageLoader(image).execute((String) image.getTag());
+                new ImageLoader(image, new Action1<Bitmap>() {
+                    @Override
+                    public void apply(Bitmap input) {
+                    }
+                }).execute((String) image.getTag());
             }
         }
     }

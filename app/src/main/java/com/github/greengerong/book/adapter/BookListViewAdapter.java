@@ -77,7 +77,7 @@ public class BookListViewAdapter extends BaseAdapter {
         final JSONObject book = (JSONObject) books.optJSONArray("books").opt(i);
         viewHolder.image.setImageBitmap(defaultImageBitmap);
 //        viewHolder.image.setTag(book.optJSONObject("images").optString("small"));
-        imageLoaderFactory.getImageLoader(viewHolder.image).execute(book.optJSONObject("images").optString("small"));
+        imageLoaderFactory.load(viewHolder.image, book.optJSONObject("images").optString("small"));
         viewHolder.bookName.setText(book.optString("title"));
         viewHolder.rating.setRating((float) book.optJSONObject("rating").optDouble("average") / 2);
         viewHolder.info.setText(TextUtils.join(" ", new String[]{
