@@ -23,11 +23,9 @@ import java.net.URL;
  */
 public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     private static final String TAG = ImageLoader.class.getName();
-    private ImageView imageView;
     private Action1<Bitmap> done;
 
-    public ImageLoader(ImageView imageView, Action1<Bitmap> done) {
-        this.imageView = imageView;
+    public ImageLoader(Action1<Bitmap> done) {
         this.done = done;
     }
 

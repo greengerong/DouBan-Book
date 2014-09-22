@@ -37,7 +37,7 @@ public class ImageLoaderFactory {
                         cacheManage.put(urls[0], bitmap);
                     }
                 };
-                new ImageLoader(image, done).execute(urls);
+                new ImageLoader(done).execute(urls);
                 return;
             }
 

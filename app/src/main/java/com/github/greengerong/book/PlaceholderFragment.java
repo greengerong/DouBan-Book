@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.github.greengerong.book.service.GetBooksAsyncTask;
-import com.github.greengerong.book.service.ViewHelper;
+import com.github.greengerong.book.utils.ViewHelper;
 
 /**
  * ***************************************

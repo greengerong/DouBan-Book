@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.github.greengerong.book.R;
 import com.github.greengerong.book.service.ImageLoaderFactory;
-import com.github.greengerong.book.service.ViewHelper;
+import com.github.greengerong.book.utils.ViewHelper;
 
 import org.json.JSONObject;
 
