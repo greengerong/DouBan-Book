@@ -11,7 +11,16 @@ package com.github.greengerong.book.utils.cache;
  * ****************************************
  */
 public final class CacheManageFact {
-    public static final CacheManage NONE_CACHE = new NoneCacheManage();
-    public static final CacheManage DEFAULT_CACHE = new DefaultCacheManage();
-    public static final CacheManage LRU_CACHE = new LRUCacheManage();
+
+    public static CacheManage getNoneCache() {
+        return new NoneCacheManage();
+    }
+
+    public static CacheManage getDefaultCache() {
+        return new DefaultCacheManage();
+    }
+
+    public static CacheManage getLruCache() {
+        return new LRUCacheManage();
+    }
 }

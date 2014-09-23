@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
+import com.github.greengerong.book.utils.delegate.Action1;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -25,12 +26,11 @@ import java.net.URL;
  */
 public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
     private static final String TAG = GetBooksAsyncTask.class.getName();
-    private final ListView bookList;
-    private final Activity context;
+    private Action1<JSONObject> onPostExecuteListener;
 
-    public GetBooksAsyncTask(ListView bookList, Activity context) {
-        this.bookList = bookList;
-        this.context = context;
+    public GetBooksAsyncTask setOnPostExecuteListener(Action1<JSONObject> onPostExecuteListener) {
+        this.onPostExecuteListener = onPostExecuteListener;
+        return this;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject books) {
-        if (books != null) {
-            bookList.setAdapter(new BookListViewAdapter(context, books));
+        if (onPostExecuteListener != null) {
+            onPostExecuteListener.apply(books);
         }
     }
 }

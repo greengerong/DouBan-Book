@@ -29,26 +29,23 @@ import org.json.JSONObject;
  * ****************************************
  */
 public class BookListViewAdapter extends BaseAdapter {
-    private final JSONObject books;
+    private JSONObject dataSource;
     private final ImageLoaderFactory imageLoaderFactory;
     private Activity context;
-    private Bitmap defaultImageBitmap;
 
-    public BookListViewAdapter(Activity context, JSONObject books) {
-        this.books = books;
+    public BookListViewAdapter(Activity context) {
         this.context = context;
-        defaultImageBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_default_cover);
         imageLoaderFactory = new ImageLoaderFactory();
     }
 
     @Override
     public int getCount() {
-        return books.optJSONArray("books").length();
+        return dataSource.optJSONArray("books").length();
     }
 
     @Override
     public Object getItem(int i) {
-        return books.optJSONArray("books").opt(i);
+        return dataSource.optJSONArray("books").opt(i);
     }
 
     @Override
@@ -74,9 +71,7 @@ public class BookListViewAdapter extends BaseAdapter {
 
         ViewHolder viewHolder = new ViewHelper(bookItemView).getTag();
 
-        final JSONObject book = (JSONObject) books.optJSONArray("books").opt(i);
-        viewHolder.image.setImageBitmap(defaultImageBitmap);
-//        viewHolder.image.setTag(book.optJSONObject("images").optString("small"));
+        final JSONObject book = (JSONObject) dataSource.optJSONArray("books").opt(i);
         imageLoaderFactory.load(viewHolder.image, book.optJSONObject("images").optString("small"));
         viewHolder.bookName.setText(book.optString("title"));
         viewHolder.rating.setRating((float) book.optJSONObject("rating").optDouble("average") / 2);
@@ -87,6 +82,11 @@ public class BookListViewAdapter extends BaseAdapter {
         }));
 
         return bookItemView;
+    }
+
+    public BookListViewAdapter setDataSource(JSONObject dataSource) {
+        this.dataSource = dataSource;
+        return this;
     }
 
     private static class ViewHolder {

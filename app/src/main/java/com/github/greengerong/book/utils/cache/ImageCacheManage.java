@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
 
 /**
  * ***************************************
@@ -22,11 +21,11 @@ import java.security.MessageDigest;
  */
 public class ImageCacheManage {
     private static final String TAG = ImageCacheManage.class.getName();
-    public static final String CACHE_DIRECTORY = Environment.getDownloadCacheDirectory() + "/book/";
+    public static final String CACHE_DIRECTORY = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/book/";
     private final CacheManage cacheManage;
 
     public ImageCacheManage() {
-        cacheManage = CacheManageFact.LRU_CACHE;
+        cacheManage = CacheManageFact.getLruCache();
     }
 
     public byte[] get(String key) {
@@ -39,7 +38,7 @@ public class ImageCacheManage {
     }
 
     private byte[] getFromDisk(String key) {
-        final File diskFile = getBytes(key);
+        final File diskFile = getFile(key);
         return diskFile.exists() ? getBytes(diskFile) : null;
     }
 
@@ -47,15 +46,15 @@ public class ImageCacheManage {
         try {
             return FileUtils.readFileToByteArray(diskFile);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.toString());
         }
         return null;
     }
 
-    private File getBytes(String key) {
+    private File getFile(String key) {
         try {
-            final String file = Base64.encodeToString(MessageDigest.getInstance("MD5").digest(key.getBytes()), Base64.DEFAULT);
-            return new File(CACHE_DIRECTORY, file);
+            final String file = Base64.encodeToString(key.getBytes(), Base64.NO_WRAP);
+            return new File(CACHE_DIRECTORY, file + ".bak");
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -68,7 +67,7 @@ public class ImageCacheManage {
         try {
             writeToFileAsync(key, value);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.toString());
         }
         return this;
     }
@@ -78,9 +77,14 @@ public class ImageCacheManage {
             @Override
             public void run() {
                 try {
-                    FileUtils.writeByteArrayToFile(getBytes(key), value);
+                    final File file = getFile(key);
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    FileUtils.writeByteArrayToFile(file, value);
                 } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
                 }
             }
         }.start();

@@ -1,6 +1,5 @@
 package com.github.greengerong.book.service;
 
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -25,24 +24,24 @@ import java.net.URL;
  */
 public class ImageLoader extends AsyncTask<String, Void, byte[]> {
     private static final String TAG = ImageLoader.class.getName();
-    private Action1<byte[]> onPostExecuteLister;
-    private Action onPreExecuteLister;
+    private Action1<byte[]> onPostExecuteListener;
+    private Action onPreExecuteListener;
 
-    public ImageLoader setonPostExecuteLister(Action1<byte[]> onPostExecuteLister) {
-        this.onPostExecuteLister = onPostExecuteLister;
+    public ImageLoader setOnPostExecuteListener(Action1<byte[]> onPostExecuteListener) {
+        this.onPostExecuteListener = onPostExecuteListener;
         return this;
     }
 
-    public ImageLoader setonPreExecuteLister(Action onPreExecuteLister) {
-        this.onPreExecuteLister = onPreExecuteLister;
+    public ImageLoader setOnPreExecuteListener(Action onPreExecuteListener) {
+        this.onPreExecuteListener = onPreExecuteListener;
         return this;
     }
 
 
     @Override
     protected void onPreExecute() {
-        if (onPreExecuteLister != null) {
-            onPreExecuteLister.apply();
+        if (onPreExecuteListener != null) {
+            onPreExecuteListener.apply();
         }
     }
 
@@ -65,8 +64,8 @@ public class ImageLoader extends AsyncTask<String, Void, byte[]> {
 
     @Override
     protected void onPostExecute(byte[] bytes) {
-        if (onPostExecuteLister != null) {
-            onPostExecuteLister.apply(bytes);
+        if (onPostExecuteListener != null) {
+            onPostExecuteListener.apply(bytes);
         }
     }
 }
