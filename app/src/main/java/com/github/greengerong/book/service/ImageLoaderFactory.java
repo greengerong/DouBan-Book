@@ -1,12 +1,16 @@
 package com.github.greengerong.book.service;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.github.greengerong.book.utils.cache.CacheManageFact;
+import com.github.greengerong.book.R;
+import com.github.greengerong.book.utils.cache.ImageCacheManage;
+import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
-import com.github.greengerong.book.utils.cache.CacheManage;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * ***************************************
@@ -20,34 +24,42 @@ import com.github.greengerong.book.utils.cache.CacheManage;
  */
 public class ImageLoaderFactory {
 
-    private final CacheManage cacheManage;
-//    private
+    private final ImageCacheManage imageCacheManage;
 
     public ImageLoaderFactory() {
-        cacheManage = CacheManageFact.DEFAULT_CACHE;
+        imageCacheManage = new ImageCacheManage();
     }
 
 
     public void load(final ImageView image, final String... urls) {
         if (urls.length > 0 && !TextUtils.isEmpty(urls[0])) {
-            final Bitmap bitmap = cacheManage.get(urls[0]);
-            if (bitmap == null) {
-                final Action1<Bitmap> done = new Action1<Bitmap>() {
+            final byte[] cacheBytes = imageCacheManage.get(urls[0]);
+
+            if (cacheBytes == null) {
+                new ImageLoader().setonPreExecuteLister(new Action() {
                     @Override
-                    public void apply(Bitmap bitmap) {
-                        if (bitmap != null && image.getTag().equals(image.hashCode())) {
-                            image.setImageBitmap(bitmap);
-                            cacheManage.put(urls[0], bitmap);
+                    public void apply() {
+                        image.setTag(R.string.image_view_tag_key, image.hashCode());
+                    }
+                }).setonPostExecuteLister(new Action1<byte[]>() {
+                    @Override
+                    public void apply(byte[] bytes) {
+                        if (bytes != null) {
+                            if (image.getTag(R.string.image_view_tag_key).equals(image.hashCode())) {
+                                image.setImageBitmap(toBitmap(bytes));
+                            }
+                            imageCacheManage.put(urls[0], bytes);
                         }
                     }
-                };
-
-                image.setTag(image.hashCode());
-                new ImageLoader(done).execute(urls);
+                }).execute(urls);
                 return;
             }
 
-            image.setImageBitmap(bitmap);
+            image.setImageBitmap(toBitmap(cacheBytes));
         }
+    }
+
+    private Bitmap toBitmap(byte[] bytes) {
+        return BitmapFactory.decodeStream(new ByteArrayInputStream(bytes));
     }
 }

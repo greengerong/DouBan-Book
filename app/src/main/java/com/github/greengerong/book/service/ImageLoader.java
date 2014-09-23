@@ -1,12 +1,13 @@
 package com.github.greengerong.book.service;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
 
+import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,30 +23,40 @@ import java.net.URL;
  * *
  * ****************************************
  */
-public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
+public class ImageLoader extends AsyncTask<String, Void, byte[]> {
     private static final String TAG = ImageLoader.class.getName();
-    private Action1<Bitmap> done;
+    private Action1<byte[]> onPostExecuteLister;
+    private Action onPreExecuteLister;
 
-    public ImageLoader(Action1<Bitmap> done) {
-        this.done = done;
+    public ImageLoader setonPostExecuteLister(Action1<byte[]> onPostExecuteLister) {
+        this.onPostExecuteLister = onPostExecuteLister;
+        return this;
+    }
+
+    public ImageLoader setonPreExecuteLister(Action onPreExecuteLister) {
+        this.onPreExecuteLister = onPreExecuteLister;
+        return this;
+    }
+
+
+    @Override
+    protected void onPreExecute() {
+        if (onPreExecuteLister != null) {
+            onPreExecuteLister.apply();
+        }
     }
 
     @Override
-    protected Bitmap doInBackground(String... urls) {
-
+    protected byte[] doInBackground(String... urls) {
         InputStream inputStream = null;
         try {
             inputStream = new URL(urls[0]).openStream();
-            return BitmapFactory.decodeStream(inputStream);
+            return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         } finally {
             if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
-                }
+                IOUtils.closeQuietly(inputStream);
             }
         }
 
@@ -53,9 +64,9 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     }
 
     @Override
-    protected void onPostExecute(Bitmap bitmap) {
-        if (done != null) {
-            done.apply(bitmap);
+    protected void onPostExecute(byte[] bytes) {
+        if (onPostExecuteLister != null) {
+            onPostExecuteLister.apply(bytes);
         }
     }
 }
