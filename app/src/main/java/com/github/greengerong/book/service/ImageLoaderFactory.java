@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
+import com.github.greengerong.book.utils.cache.CacheManageFact;
 import com.github.greengerong.book.utils.delegate.Action1;
 import com.github.greengerong.book.utils.cache.CacheManage;
-import com.github.greengerong.book.utils.cache.DefaultCacheManage;
 
 /**
  * ***************************************
@@ -21,10 +21,12 @@ import com.github.greengerong.book.utils.cache.DefaultCacheManage;
 public class ImageLoaderFactory {
 
     private final CacheManage cacheManage;
+//    private
 
     public ImageLoaderFactory() {
-        cacheManage = DefaultCacheManage.getInstance();
+        cacheManage = CacheManageFact.DEFAULT_CACHE;
     }
+
 
     public void load(final ImageView image, final String... urls) {
         if (urls.length > 0 && !TextUtils.isEmpty(urls[0])) {
@@ -33,10 +35,14 @@ public class ImageLoaderFactory {
                 final Action1<Bitmap> done = new Action1<Bitmap>() {
                     @Override
                     public void apply(Bitmap bitmap) {
-                        image.setImageBitmap(bitmap);
-                        cacheManage.put(urls[0], bitmap);
+                        if (bitmap != null && image.getTag().equals(image.hashCode())) {
+                            image.setImageBitmap(bitmap);
+                            cacheManage.put(urls[0], bitmap);
+                        }
                     }
                 };
+
+                image.setTag(image.hashCode());
                 new ImageLoader(done).execute(urls);
                 return;
             }

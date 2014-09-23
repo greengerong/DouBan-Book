@@ -3,8 +3,6 @@ package com.github.greengerong.book.utils.cache;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import java.util.Map;
-
 /**
  * ***************************************
  * *
@@ -16,23 +14,10 @@ import java.util.Map;
  * ****************************************
  */
 public class DefaultCacheManage implements CacheManage {
-    private static CacheManage instance;
-    private static final Object lockObj = new Object();
     private Cache<Object, Object> cahce;
 
-    private DefaultCacheManage() {
+    public DefaultCacheManage() {
         cahce = CacheBuilder.newBuilder().maximumSize(100).build();
-    }
-
-    public static CacheManage getInstance() {
-        if (instance == null) {
-            synchronized (lockObj) {
-                if (instance == null) {
-                    instance = new DefaultCacheManage();
-                }
-            }
-        }
-        return instance;
     }
 
     @Override
@@ -53,20 +38,8 @@ public class DefaultCacheManage implements CacheManage {
     }
 
     @Override
-    public CacheManage putAll(Map map) {
-        cahce.putAll(map);
-        return this;
-    }
-
-    @Override
     public CacheManage remove(Object key) {
         cahce.invalidate(key);
-        return this;
-    }
-
-    @Override
-    public CacheManage removeAll(Iterable<?> keys) {
-        cahce.invalidate(keys);
         return this;
     }
 

@@ -1,7 +1,5 @@
 package com.github.greengerong.book.utils.cache;
 
-import java.util.Map;
-
 /**
  * ***************************************
  * *
@@ -12,15 +10,8 @@ import java.util.Map;
  * *
  * ****************************************
  */
-public interface CacheManage {
-
-    <T> T get(Object key);
-
-    boolean containsKey(Object key);
-
-    CacheManage put(Object key, Object value);
-
-    CacheManage remove(Object key);
-
-    CacheManage clear();
+public final class CacheManageFact {
+    public static final CacheManage NONE_CACHE = new NoneCacheManage();
+    public static final CacheManage DEFAULT_CACHE = new DefaultCacheManage();
+    public static final CacheManage LRU_CACHE = new LRUCacheManage();
 }

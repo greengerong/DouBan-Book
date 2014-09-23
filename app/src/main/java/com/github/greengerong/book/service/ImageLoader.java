@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.github.greengerong.book.utils.delegate.Action1;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -32,10 +33,20 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... urls) {
 
+        InputStream inputStream = null;
         try {
-            return BitmapFactory.decodeStream(new URL(urls[0]).openStream());
+            inputStream = new URL(urls[0]).openStream();
+            return BitmapFactory.decodeStream(inputStream);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
         }
 
         return null;
@@ -43,7 +54,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        if (bitmap != null) {
+        if (done != null) {
             done.apply(bitmap);
         }
     }
