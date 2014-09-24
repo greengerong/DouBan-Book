@@ -27,28 +27,47 @@ import org.json.JSONObject;
  */
 public class PlaceholderFragment extends Fragment {
 
+    private BookListViewAdapter bookListViewAdapter;
+    private ListView bookList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final Activity context = getActivity();
-        final ListView bookList = new ViewHelper(rootView).findViewById(R.id.bookList);
+        bookList = new ViewHelper(rootView).findViewById(R.id.bookList);
 
-        new GetBooksAsyncTask()
-                .setOnPostExecuteListener(new Action1<JSONObject>() {
-                    @Override
-                    public void apply(JSONObject books) {
-                        if (books != null) {
-                            BookListViewAdapter bookListViewAdapter = new BookListViewAdapter(context)
-                                    .setDataSource(books);
+        final Action1<JSONObject> onPostExecuteListener = new Action1<JSONObject>() {
+            @Override
+            public void apply(JSONObject books) {
+                if (books != null) {
+                    bookListViewAdapter = new BookListViewAdapter(context)
+                            .setDataSource(books);
 
-                            bookList.setAdapter(bookListViewAdapter);
-                        }
-                    }
-                }).execute("https://api.douban.com/v2/book/search?q=%E7%BC%96%E7%A8%8B");
+                    bookList.setAdapter(bookListViewAdapter);
+                }
+            }
+        };
+        getBooks(onPostExecuteListener);
 
         return rootView;
+    }
+
+    private void getBooks(Action1<JSONObject> onPostExecuteListener) {
+        getBooks(onPostExecuteListener, 0, 20);
+    }
+
+    private void getBooks(Action1<JSONObject> onPostExecuteListener, int start, int count) {
+        final String api = "https://api.douban.com/v2/book/search?q=%%E7%%BC%%96%%E7%%A8%%8B&start=%s&count=%s";
+        final String url = String.format(api, start, count);
+        new GetBooksAsyncTask().setOnPostExecuteListener(onPostExecuteListener).execute(url);
+    }
+
+    private void updateBooks(JSONObject dataSource) {
+        bookListViewAdapter.setDataSource(dataSource).notifyDataSetChanged();
+        bookList.invalidateViews();
+        bookList.refreshDrawableState();
+
     }
 
 }
