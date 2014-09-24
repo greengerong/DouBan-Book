@@ -1,16 +1,14 @@
 package com.github.greengerong.book.service;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.ListView;
 
-import com.github.greengerong.book.adapter.BookListViewAdapter;
+import com.github.greengerong.book.domain.BookSearchResult;
+import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
+import com.google.gson.Gson;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONObject;
 
 import java.net.URL;
 
@@ -24,22 +22,28 @@ import java.net.URL;
  * *
  * ****************************************
  */
-public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
+public class GetBooksAsyncTask extends AsyncTask<String, Void, BookSearchResult> {
     private static final String TAG = GetBooksAsyncTask.class.getName();
-    private Action1<JSONObject> onPostExecuteListener;
+    private Action1<BookSearchResult> onPostExecuteListener;
+    private Action onPreExecuteListener;
 
-    public GetBooksAsyncTask setOnPostExecuteListener(Action1<JSONObject> onPostExecuteListener) {
+    public GetBooksAsyncTask setOnPostExecuteListener(Action1<BookSearchResult> onPostExecuteListener) {
         this.onPostExecuteListener = onPostExecuteListener;
         return this;
     }
 
+    public GetBooksAsyncTask setOnPreExecuteListener(Action onPreExecuteListener) {
+        this.onPreExecuteListener = onPreExecuteListener;
+        return this;
+    }
+
     @Override
-    protected JSONObject doInBackground(String... urls) {
+    protected BookSearchResult doInBackground(String... urls) {
         try {
             if (urls.length > 0) {
                 final String url = urls[0];
-                String responseText = IOUtils.toString(new URL(url).openStream());
-                return new JSONObject(responseText);
+                String jsonResult = IOUtils.toString(new URL(url).openStream());
+                return new Gson().fromJson(jsonResult, BookSearchResult.class);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -49,9 +53,17 @@ public class GetBooksAsyncTask extends AsyncTask<String, Void, JSONObject> {
     }
 
     @Override
-    protected void onPostExecute(JSONObject books) {
+    protected void onPostExecute(BookSearchResult books) {
         if (onPostExecuteListener != null) {
             onPostExecuteListener.apply(books);
+        }
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (onPreExecuteListener != null) {
+            onPreExecuteListener.apply();
         }
     }
 }
