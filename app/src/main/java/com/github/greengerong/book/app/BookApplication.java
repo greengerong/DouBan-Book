@@ -2,10 +2,6 @@ package com.github.greengerong.book.app;
 
 import android.app.Application;
 
-import java.util.Arrays;
-import java.util.List;
-
-import dagger.ObjectGraph;
 
 /**
  * ***************************************
@@ -18,27 +14,10 @@ import dagger.ObjectGraph;
  * ****************************************
  */
 public class BookApplication extends Application {
-    private ObjectGraph graph;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(new BookApplicationUncaughtExceptionHandler());
-//        graph = ObjectGraph.create(getModules().toArray());
     }
-
-    private List<Object> getModules() {
-        return Arrays.asList(
-
-        );
-    }
-
-    protected void inject(Object object) {
-        graph.inject(object);
-    }
-
-    public ObjectGraph getGraph() {
-        return graph;
-    }
-
 }

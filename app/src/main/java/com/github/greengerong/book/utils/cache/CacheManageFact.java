@@ -16,10 +16,6 @@ public final class CacheManageFact {
         return new NoneCacheManage();
     }
 
-    public static CacheManage getDefaultCache() {
-        return new DefaultCacheManage();
-    }
-
     public static CacheManage getLruCache() {
         return new LRUCacheManage();
     }
