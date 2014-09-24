@@ -46,8 +46,6 @@ public class ImageLoaderFactory {
                     @Override
                     public void apply(byte[] bytes) {
                         if (bytes != null) {
-                            Log.i("----", urls[0] + "--" + image.getTag(R.string.image_view_tag_key) + " ========" + image.hashCode());
-                            Log.i(urls[0], image.getTag(R.string.image_view_tag_key).equals(urls[0]) + "");
                             if (image.getTag(R.string.image_view_tag_key).equals(urls[0])) {
                                 image.setImageBitmap(toBitmap(bytes));
                             }
