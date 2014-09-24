@@ -41,14 +41,13 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        final Activity context = getActivity();
         final ViewHelper viewHelper = new ViewHelper(rootView);
         swipeRefreshLayout = viewHelper.findViewById(R.id.bookListPanel);
         bookList = viewHelper.findViewById(R.id.bookList);
 
         setupBookList();
         setupSwipeRefreshLayout();
-        
+
         doRefreshBookList();
         return rootView;
     }
