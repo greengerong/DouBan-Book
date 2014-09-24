@@ -36,7 +36,7 @@ public class Book {
 
     private String binding;
 
-    private List<Object> translator = new ArrayList<Object>();
+    private List<String> translator = new ArrayList<String>();
 
     private String catalog;
 
@@ -128,11 +128,11 @@ public class Book {
         this.binding = binding;
     }
 
-    public List<Object> getTranslator() {
+    public List<String> getTranslator() {
         return translator;
     }
 
-    public void setTranslator(List<Object> translator) {
+    public void setTranslator(List<String> translator) {
         this.translator = translator;
     }
 
