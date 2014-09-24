@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.github.greengerong.book.domain.BookSearchResult;
+import com.github.greengerong.book.utils.LogUtils;
 import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
 import com.google.gson.Gson;
@@ -46,7 +47,7 @@ public class GetBooksAsyncTask extends AsyncTask<String, Void, BookSearchResult>
                 return new Gson().fromJson(jsonResult, BookSearchResult.class);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, LogUtils.getStackTrace(e));
         }
 
         return null;
@@ -54,6 +55,7 @@ public class GetBooksAsyncTask extends AsyncTask<String, Void, BookSearchResult>
 
     @Override
     protected void onPostExecute(BookSearchResult books) {
+        super.onPostExecute(books);
         if (onPostExecuteListener != null) {
             onPostExecuteListener.apply(books);
         }

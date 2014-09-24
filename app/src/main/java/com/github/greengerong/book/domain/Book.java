@@ -234,9 +234,13 @@ public class Book {
 
     public String getInformation() {
         return TextUtils.join(" ", new String[]{
-                getAuthor().get(0),
-                getPublisher(),
+                getFirstAuthor(),
+                publisher,
                 pubdate
         });
+    }
+
+    private String getFirstAuthor() {
+        return author.size() > 0 ? author.get(0) : "";
     }
 }

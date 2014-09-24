@@ -3,6 +3,7 @@ package com.github.greengerong.book.service;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.github.greengerong.book.utils.LogUtils;
 import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
 
@@ -40,6 +41,7 @@ public class ImageLoader extends AsyncTask<String, Void, byte[]> {
 
     @Override
     protected void onPreExecute() {
+        super.onPreExecute();
         if (onPreExecuteListener != null) {
             onPreExecuteListener.apply();
         }
@@ -52,7 +54,7 @@ public class ImageLoader extends AsyncTask<String, Void, byte[]> {
             inputStream = new URL(urls[0]).openStream();
             return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, LogUtils.getStackTrace(e));
         } finally {
             if (inputStream != null) {
                 IOUtils.closeQuietly(inputStream);
@@ -64,6 +66,7 @@ public class ImageLoader extends AsyncTask<String, Void, byte[]> {
 
     @Override
     protected void onPostExecute(byte[] bytes) {
+        super.onPostExecute(bytes);
         if (onPostExecuteListener != null) {
             onPostExecuteListener.apply(bytes);
         }

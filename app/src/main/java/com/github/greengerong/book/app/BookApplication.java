@@ -23,6 +23,7 @@ public class BookApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Thread.setDefaultUncaughtExceptionHandler(new BookApplicationUncaughtExceptionHandler());
 //        graph = ObjectGraph.create(getModules().toArray());
     }
 
@@ -39,4 +40,5 @@ public class BookApplication extends Application {
     public ObjectGraph getGraph() {
         return graph;
     }
+
 }

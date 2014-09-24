@@ -1,6 +1,7 @@
 package com.github.greengerong.book.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.github.greengerong.book.domain.Book;
 import com.github.greengerong.book.domain.BookSearchResult;
 import com.github.greengerong.book.service.ImageLoaderFactory;
 import com.github.greengerong.book.utils.ViewHelper;
+import com.squareup.picasso.Picasso;
 
 /**
  * ***************************************
@@ -28,9 +30,9 @@ import com.github.greengerong.book.utils.ViewHelper;
 public class BookListViewAdapter extends ArrayAdapter<Book> {
     private BookSearchResult dataSource;
     private final ImageLoaderFactory imageLoaderFactory;
-    private Activity context;
+    private Context context;
 
-    public BookListViewAdapter(Activity context) {
+    public BookListViewAdapter(Context context) {
         super(context, 0);
         this.context = context;
         imageLoaderFactory = new ImageLoaderFactory();
@@ -49,17 +51,19 @@ public class BookListViewAdapter extends ArrayAdapter<Book> {
             viewHolder.image = viewHelper.findViewById(R.id.image);
             viewHolder.info = viewHelper.findViewById(R.id.info);
 
+
             bookItemView.setTag(viewHolder);
         }
 
         ViewHolder viewHolder = new ViewHelper(bookItemView).getTag();
 
         final Book book = getItem(i);
-        imageLoaderFactory.load(viewHolder.image, book.getImages().getSmall());
+//        imageLoaderFactory.load(viewHolder.image, book.getImages().getSmall());
         viewHolder.bookName.setText(book.getTitle());
         viewHolder.rating.setRating(book.getRating().getAverage() / 2);
         viewHolder.info.setText(book.getInformation());
 
+        Picasso.with(getContext()).load(book.getImages().getSmall()).into(viewHolder.image);
         return bookItemView;
     }
 

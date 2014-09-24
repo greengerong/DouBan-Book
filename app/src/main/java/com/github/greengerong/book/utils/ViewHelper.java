@@ -1,6 +1,13 @@
 package com.github.greengerong.book.utils;
 
+import android.app.Activity;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.github.greengerong.book.R;
 
 import java.lang.ref.WeakReference;
 

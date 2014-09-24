@@ -26,7 +26,8 @@ dependencies {
             'com.squareup.dagger:dagger-compiler:1.2.2',
             'com.loopj.android:android-async-http:1.4.5',
             'com.android.support:support-v4:20.0.0',
-            'com.google.code.gson:gson:2.3'
+            'com.google.code.gson:gson:2.3',
+            'com.squareup.picasso:picasso:2.3.4'
 //            'joda-time:joda-time:2.3'
     )
 }

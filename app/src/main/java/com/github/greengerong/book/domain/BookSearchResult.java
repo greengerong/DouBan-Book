@@ -56,4 +56,7 @@ public class BookSearchResult {
         this.books = books;
     }
 
+    public boolean isLoadCompleted() {
+        return start + count >= total;
+    }
 }

@@ -4,6 +4,8 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
+import com.github.greengerong.book.utils.LogUtils;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -56,7 +58,7 @@ public class ImageCacheManage {
             final String file = Base64.encodeToString(key.getBytes(), Base64.NO_WRAP);
             return new File(CACHE_DIRECTORY, file + ".bak");
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, LogUtils.getStackTrace(e));
         }
         return null;
     }

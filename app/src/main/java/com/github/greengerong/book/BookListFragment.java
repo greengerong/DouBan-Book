@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
 import com.github.greengerong.book.domain.BookSearchResult;
-import com.github.greengerong.book.service.GetBooksAsyncTask;
+import com.github.greengerong.book.service.BookService;
 import com.github.greengerong.book.utils.ViewHelper;
 import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
@@ -26,67 +26,73 @@ import com.github.greengerong.book.utils.delegate.Action1;
  * *
  * ****************************************
  */
-public class BookListFragment extends Fragment {
+public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    public static final int INIT_START_INDEX = 0;
-    public static final int PAGE_SIZE = 20;
+    private final BookService bookService;
     private BookListViewAdapter bookListViewAdapter;
     private ListView bookList;
-    public static final String BOOK_API_URL = "https://api.douban.com/v2/book/search?q=%%E7%%BC%%96%%E7%%A8%%8B&start=%s&count=%s";
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    public BookListFragment() {
+        bookService = new BookService();
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final Activity context = getActivity();
         final ViewHelper viewHelper = new ViewHelper(rootView);
-        bookList = viewHelper.findViewById(R.id.bookList);
-        bookListViewAdapter = new BookListViewAdapter(context);
-        bookList.setAdapter(bookListViewAdapter);
         swipeRefreshLayout = viewHelper.findViewById(R.id.bookListPanel);
+        bookList = viewHelper.findViewById(R.id.bookList);
+
+        setupBookList();
+        setupSwipeRefreshLayout();
+        
+        doRefreshBookList();
+        return rootView;
+    }
+
+    private void setupBookList() {
+        bookListViewAdapter = new BookListViewAdapter(bookList.getContext());
+        bookList.setAdapter(bookListViewAdapter);
+        bookList.setOnScrollListener(new BookListOnScrollListener(bookList, bookListViewAdapter));
+    }
+
+    private void setupSwipeRefreshLayout() {
         swipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_blue_light,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        swipeRefreshLayout.setOnRefreshListener(new BookListOnRefreshListener());
+        swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
         doRefreshBookList();
-        return rootView;
     }
 
     private void doRefreshBookList() {
-        loadBooks(INIT_START_INDEX);
-    }
+        bookService.getBookList(new Action() {
+            @Override
+            public void apply() {
+                if (!swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        }, new Action1<BookSearchResult>() {
+            @Override
+            public void apply(BookSearchResult bookSearchResult) {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
 
-    private void loadBooks(int start) {
-        new GetBooksAsyncTask()
-                .setOnPreExecuteListener(new Action() {
-                    @Override
-                    public void apply() {
-                        if (!swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(true);
-                        }
-                    }
-                })
-                .setOnPostExecuteListener(new Action1<BookSearchResult>() {
-                    @Override
-                    public void apply(BookSearchResult bookSearchResult) {
-                        if (bookSearchResult != null) {
-                            if (swipeRefreshLayout.isRefreshing()) {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                            bookListViewAdapter.clear();
-                            bookListViewAdapter.addAll(bookSearchResult.getBooks());
-                        }
-                    }
-                }).execute(String.format(BOOK_API_URL, start, PAGE_SIZE));
-    }
-
-    private class BookListOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
-        @Override
-        public void onRefresh() {
-            doRefreshBookList();
-        }
+                if (bookSearchResult != null) {
+                    bookListViewAdapter.clear();
+                    bookListViewAdapter.addAll(bookSearchResult.getBooks());
+                }
+            }
+        });
     }
 }
