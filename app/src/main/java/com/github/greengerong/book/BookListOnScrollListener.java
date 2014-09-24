@@ -47,9 +47,13 @@ class BookListOnScrollListener implements AbsListView.OnScrollListener {
 
     @Override
     public void onScroll(AbsListView absListView, int firstItem, int visibleItemCount, int totalItemCount) {
-        if (totalItemCount > 0 && !isLoading && !loadCompleted && isScrollToBottom(firstItem, visibleItemCount, totalItemCount)) {
+        if (shouldLoadMoreBook(firstItem, visibleItemCount, totalItemCount)) {
             loadMoreBook();
         }
+    }
+
+    private boolean shouldLoadMoreBook(int firstItem, int visibleItemCount, int totalItemCount) {
+        return totalItemCount > 0 && !isLoading && !loadCompleted && isScrollToBottom(firstItem, visibleItemCount, totalItemCount);
     }
 
     private boolean isScrollToBottom(int firstItem, int visibleItemCount, int totalItemCount) {
