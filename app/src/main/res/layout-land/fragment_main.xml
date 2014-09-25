@@ -4,16 +4,22 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity$PlaceholderFragment">
 
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/bookListPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
+        <GridView
             android:id="@+id/bookList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
+            android:layout_height="match_parent"
+            android:fastScrollEnabled="true"
+            android:horizontalSpacing="10dp"
+            android:numColumns="2"
+            android:verticalSpacing="10dp">
 
+        </GridView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
@@ -22,5 +28,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"></include>
-
 </RelativeLayout>

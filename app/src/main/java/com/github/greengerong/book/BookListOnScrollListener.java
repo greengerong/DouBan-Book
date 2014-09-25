@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
 import com.github.greengerong.book.domain.BookSearchResult;
@@ -25,16 +24,15 @@ import com.github.greengerong.book.utils.delegate.Action1;
  */
 class BookListOnScrollListener implements AbsListView.OnScrollListener {
     private static final String TAG = BookListOnScrollListener.class.getName();
-    private final Context context;
     private final BookService bookService;
-    private View loadMoreChipView;
     public boolean loadCompleted;
     public boolean isLoading;
-    private ListView bookList;
+    private AbsListView bookList;
     private BookListViewAdapter bookListViewAdapter;
+    private View loadMoreFooter;
 
-    public BookListOnScrollListener(ListView bookList, BookListViewAdapter bookListViewAdapter) {
-        this.context = bookList.getContext();
+    public BookListOnScrollListener(AbsListView bookList, BookListViewAdapter bookListViewAdapter, View loadMoreFooter) {
+        this.loadMoreFooter = loadMoreFooter;
         this.bookList = bookList;
         this.bookListViewAdapter = bookListViewAdapter;
         bookService = new BookService();
@@ -65,37 +63,23 @@ class BookListOnScrollListener implements AbsListView.OnScrollListener {
             @Override
             public void apply() {
                 isLoading = true;
-                addLoadMoreViewFooter();
+                loadMoreFooter.setVisibility(View.VISIBLE);
             }
 
         }, new Action1<BookSearchResult>() {
             @Override
             public void apply(BookSearchResult bookSearchResult) {
                 isLoading = false;
-                removeLoadMoreViewFooter();
+                loadMoreFooter.setVisibility(View.GONE);
                 if (bookSearchResult != null) {
                     loadCompleted = bookSearchResult.isLoadCompleted();
                     bookListViewAdapter.addAll(bookSearchResult.getBooks());
                     if (loadCompleted) {
-                        ToastUtils.showToast(context, String.format("Book load completed(%d)!", bookSearchResult.getTotal()));
+                        ToastUtils.showToast(bookList.getContext(), String.format("Book load completed(%d)!", bookSearchResult.getTotal()));
                     }
                     Log.d(TAG, String.format("loaded book(%d)", bookSearchResult.getStart() + bookSearchResult.getCount()));
                 }
             }
         }, bookList.getCount());
     }
-
-    private void removeLoadMoreViewFooter() {
-        if (loadMoreChipView != null) {
-            bookList.removeFooterView(loadMoreChipView);
-        }
-    }
-
-    private void addLoadMoreViewFooter() {
-        if (loadMoreChipView == null) {
-            loadMoreChipView = View.inflate(context, R.layout.load_more_chip, null);
-        }
-        bookList.addFooterView(loadMoreChipView, null, false);
-    }
-
 }

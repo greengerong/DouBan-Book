@@ -1,5 +1,6 @@
 package com.github.greengerong.book.service;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
@@ -27,8 +28,8 @@ public class ImageLoaderFactory {
 
     private final ImageCacheManage imageCacheManage;
 
-    public ImageLoaderFactory() {
-        imageCacheManage = new ImageCacheManage();
+    public ImageLoaderFactory(Context context) {
+        imageCacheManage = new ImageCacheManage(context);
     }
 
 

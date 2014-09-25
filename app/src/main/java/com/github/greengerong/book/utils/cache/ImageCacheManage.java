@@ -1,6 +1,6 @@
 package com.github.greengerong.book.utils.cache;
 
-import android.os.Environment;
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
@@ -23,10 +23,12 @@ import java.io.IOException;
  */
 public class ImageCacheManage {
     private static final String TAG = ImageCacheManage.class.getName();
-    public static final String CACHE_DIRECTORY = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/book/";
+    public final String cacheDirectory;
+
     private final CacheManage cacheManage;
 
-    public ImageCacheManage() {
+    public ImageCacheManage(Context context) {
+        cacheDirectory = context.getExternalCacheDir().getAbsolutePath();
         cacheManage = CacheManageFact.getLruCache();
     }
 
@@ -56,7 +58,7 @@ public class ImageCacheManage {
     private File getFile(String key) {
         try {
             final String file = Base64.encodeToString(key.getBytes(), Base64.NO_WRAP);
-            return new File(CACHE_DIRECTORY, file + ".bak");
+            return new File(cacheDirectory, file + ".bak");
         } catch (Exception e) {
             Log.e(TAG, LogUtils.getStackTrace(e));
         }

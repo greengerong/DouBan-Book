@@ -1,13 +1,12 @@
 package com.github.greengerong.book;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.AbsListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
 import com.github.greengerong.book.domain.BookSearchResult;
@@ -30,7 +29,7 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private final BookService bookService;
     private BookListViewAdapter bookListViewAdapter;
-    private ListView bookList;
+    private AbsListView bookList;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public BookListFragment() {
@@ -44,18 +43,19 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
         final ViewHelper viewHelper = new ViewHelper(rootView);
         swipeRefreshLayout = viewHelper.findViewById(R.id.bookListPanel);
         bookList = viewHelper.findViewById(R.id.bookList);
-
-        setupBookList();
+        final View loadMoreFooter = viewHelper.findViewById(R.id.loadMoreFooter);
+        loadMoreFooter.setVisibility(View.GONE);
+        setupBookList(loadMoreFooter);
         setupSwipeRefreshLayout();
 
         doRefreshBookList();
         return rootView;
     }
 
-    private void setupBookList() {
+    private void setupBookList(View loadMoreFooter) {
         bookListViewAdapter = new BookListViewAdapter(bookList.getContext());
         bookList.setAdapter(bookListViewAdapter);
-        bookList.setOnScrollListener(new BookListOnScrollListener(bookList, bookListViewAdapter));
+        bookList.setOnScrollListener(new BookListOnScrollListener(bookList, bookListViewAdapter, loadMoreFooter));
     }
 
     private void setupSwipeRefreshLayout() {

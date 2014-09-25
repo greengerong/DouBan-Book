@@ -35,7 +35,7 @@ public class BookListViewAdapter extends ArrayAdapter<Book> {
     public BookListViewAdapter(Context context) {
         super(context, 0);
         this.context = context;
-        imageLoaderFactory = new ImageLoaderFactory();
+        imageLoaderFactory = new ImageLoaderFactory(context);
     }
 
     @Override
