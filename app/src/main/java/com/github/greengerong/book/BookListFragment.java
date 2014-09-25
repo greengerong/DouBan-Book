@@ -9,11 +9,16 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 
 import com.github.greengerong.book.adapter.BookListViewAdapter;
+import com.github.greengerong.book.domain.Book;
 import com.github.greengerong.book.domain.BookSearchResult;
 import com.github.greengerong.book.service.BookService;
 import com.github.greengerong.book.utils.ViewHelper;
 import com.github.greengerong.book.utils.delegate.Action;
 import com.github.greengerong.book.utils.delegate.Action1;
+
+import java.io.Serializable;
+import java.security.KeyStore;
+import java.util.ArrayList;
 
 /**
  * ***************************************
@@ -27,10 +32,14 @@ import com.github.greengerong.book.utils.delegate.Action1;
  */
 public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    public static final String DATA_SOURCE = "dataSource";
+    public static final String FIRST_VISIBLE_POSITION = "firstVisiblePosition";
+    public static final String LOAD_COMPLETED = "loadCompleted";
     private final BookService bookService;
     private BookListViewAdapter bookListViewAdapter;
     private AbsListView bookList;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private BookListOnScrollListener onScrollListener;
 
     public BookListFragment() {
         bookService = new BookService();
@@ -48,14 +57,34 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
         setupBookList(loadMoreFooter);
         setupSwipeRefreshLayout();
 
-        doRefreshBookList();
+        if (savedInstanceState != null) {
+            onRestoredBundle(savedInstanceState);
+        } else {
+            doRefreshBookList();
+        }
         return rootView;
+    }
+
+    private void onRestoredBundle(Bundle savedInstanceState) {
+        final ArrayList<Book> books = (ArrayList<Book>) savedInstanceState.getSerializable(DATA_SOURCE);
+        bookListViewAdapter.addAll(books);
+        bookList.smoothScrollToPosition(savedInstanceState.getInt(FIRST_VISIBLE_POSITION));
+        onScrollListener.setLoadCompleted(savedInstanceState.getBoolean(LOAD_COMPLETED));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(DATA_SOURCE, bookListViewAdapter.getAll());
+        outState.putInt(FIRST_VISIBLE_POSITION, bookList.getFirstVisiblePosition());
+        outState.putBoolean(LOAD_COMPLETED, onScrollListener.isLoadCompleted());
     }
 
     private void setupBookList(View loadMoreFooter) {
         bookListViewAdapter = new BookListViewAdapter(bookList.getContext());
         bookList.setAdapter(bookListViewAdapter);
-        bookList.setOnScrollListener(new BookListOnScrollListener(bookList, bookListViewAdapter, loadMoreFooter));
+        onScrollListener = new BookListOnScrollListener(bookList, bookListViewAdapter, loadMoreFooter);
+        bookList.setOnScrollListener(onScrollListener);
     }
 
     private void setupSwipeRefreshLayout() {

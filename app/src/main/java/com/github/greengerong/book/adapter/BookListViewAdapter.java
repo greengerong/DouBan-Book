@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -17,6 +18,10 @@ import com.github.greengerong.book.service.ImageLoaderFactory;
 import com.github.greengerong.book.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+
 /**
  * ***************************************
  * *
@@ -27,15 +32,28 @@ import com.squareup.picasso.Picasso;
  * *
  * ****************************************
  */
-public class BookListViewAdapter extends ArrayAdapter<Book> {
-    private BookSearchResult dataSource;
-    private final ImageLoaderFactory imageLoaderFactory;
+public class BookListViewAdapter extends BaseAdapter {
     private Context context;
+    private ArrayList<Book> books;
 
     public BookListViewAdapter(Context context) {
-        super(context, 0);
         this.context = context;
-        imageLoaderFactory = new ImageLoaderFactory(context);
+        books = new ArrayList<Book>();
+    }
+
+    @Override
+    public int getCount() {
+        return books.size();
+    }
+
+    @Override
+    public Book getItem(int i) {
+        return books.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -62,9 +80,22 @@ public class BookListViewAdapter extends ArrayAdapter<Book> {
         viewHolder.bookName.setText(book.getTitle());
         viewHolder.rating.setRating(book.getRating().getAverage() / 2);
         viewHolder.info.setText(book.getInformation());
-
-        Picasso.with(getContext()).load(book.getImages().getSmall()).into(viewHolder.image);
+        Picasso.with(context).load(book.getImages().getSmall()).into(viewHolder.image);
         return bookItemView;
+    }
+
+    public void clear() {
+        books.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<Book> books) {
+        this.books.addAll(books);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<Book> getAll() {
+        return books;
     }
 
     private static class ViewHolder {

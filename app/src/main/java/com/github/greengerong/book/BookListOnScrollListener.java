@@ -25,8 +25,8 @@ import com.github.greengerong.book.utils.delegate.Action1;
 class BookListOnScrollListener implements AbsListView.OnScrollListener {
     private static final String TAG = BookListOnScrollListener.class.getName();
     private final BookService bookService;
-    public boolean loadCompleted;
-    public boolean isLoading;
+    private boolean loadCompleted;
+    private boolean isLoading;
     private AbsListView bookList;
     private BookListViewAdapter bookListViewAdapter;
     private View loadMoreFooter;
@@ -36,6 +36,14 @@ class BookListOnScrollListener implements AbsListView.OnScrollListener {
         this.bookList = bookList;
         this.bookListViewAdapter = bookListViewAdapter;
         bookService = new BookService();
+    }
+
+    public boolean isLoadCompleted() {
+        return loadCompleted;
+    }
+
+    public void setLoadCompleted(boolean loadCompleted) {
+        this.loadCompleted = loadCompleted;
     }
 
     @Override
