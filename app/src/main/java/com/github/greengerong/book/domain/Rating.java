@@ -1,5 +1,8 @@
 package com.github.greengerong.book.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * ***************************************
  * *
@@ -11,7 +14,7 @@ package com.github.greengerong.book.domain;
  * ****************************************
  */
 
-public class Rating {
+public class Rating implements Parcelable {
 
     private Integer max;
 
@@ -53,4 +56,37 @@ public class Rating {
         this.min = min;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.max);
+        dest.writeValue(this.numRaters);
+        dest.writeFloat(this.average);
+        dest.writeValue(this.min);
+    }
+
+    public Rating() {
+    }
+
+    private Rating(Parcel in) {
+        this.max = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.numRaters = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.average = in.readFloat();
+        this.min = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Creator<Rating> CREATOR = new Creator<Rating>() {
+        public Rating createFromParcel(Parcel source) {
+            return new Rating(source);
+        }
+
+        public Rating[] newArray(int size) {
+            return new Rating[size];
+        }
+    };
 }

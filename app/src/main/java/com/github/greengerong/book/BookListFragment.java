@@ -66,8 +66,7 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void onRestoredBundle(Bundle savedInstanceState) {
-        final ArrayList<Book> books = (ArrayList<Book>) savedInstanceState.getSerializable(DATA_SOURCE);
-        bookListViewAdapter.addAll(books);
+        bookListViewAdapter.addAll(savedInstanceState.<Book>getParcelableArrayList(DATA_SOURCE));
         bookList.smoothScrollToPosition(savedInstanceState.getInt(FIRST_VISIBLE_POSITION));
         onScrollListener.setLoadCompleted(savedInstanceState.getBoolean(LOAD_COMPLETED));
     }
@@ -75,7 +74,7 @@ public class BookListFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(DATA_SOURCE, bookListViewAdapter.getAll());
+        outState.putParcelableArrayList(DATA_SOURCE, bookListViewAdapter.getAll());
         outState.putInt(FIRST_VISIBLE_POSITION, bookList.getFirstVisiblePosition());
         outState.putBoolean(LOAD_COMPLETED, onScrollListener.isLoadCompleted());
     }

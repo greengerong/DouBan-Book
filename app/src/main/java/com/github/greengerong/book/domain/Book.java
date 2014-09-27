@@ -10,6 +10,8 @@ package com.github.greengerong.book.domain;
  * ****************************************
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
@@ -17,17 +19,17 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Book {
+public class Book implements Parcelable {
 
     private Rating rating;
 
     private String subtitle;
 
-    private List<String> author = new ArrayList<String>();
+    private ArrayList<String> author = new ArrayList<String>();
 
     private String pubdate;
 
-    private List<Tag> tags = new ArrayList<Tag>();
+    private ArrayList<Tag> tags = new ArrayList<Tag>();
 
     @SerializedName("origin_title")
     private String originTitle;
@@ -36,7 +38,7 @@ public class Book {
 
     private String binding;
 
-    private List<String> translator = new ArrayList<String>();
+    private ArrayList<String> translator = new ArrayList<String>();
 
     private String catalog;
 
@@ -84,7 +86,7 @@ public class Book {
         return author;
     }
 
-    public void setAuthor(List<String> author) {
+    public void setAuthor(ArrayList<String> author) {
         this.author = author;
     }
 
@@ -100,7 +102,7 @@ public class Book {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;
     }
 
@@ -132,7 +134,7 @@ public class Book {
         return translator;
     }
 
-    public void setTranslator(List<String> translator) {
+    public void setTranslator(ArrayList<String> translator) {
         this.translator = translator;
     }
 
@@ -243,4 +245,42 @@ public class Book {
     private String getFirstAuthor() {
         return author.size() > 0 ? author.get(0) : "";
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.rating, 0);
+        dest.writeSerializable(this.author);
+        dest.writeString(this.pubdate);
+        dest.writeParcelable(this.images, 0);
+        dest.writeString(this.publisher);
+        dest.writeString(this.title);
+    }
+
+    public Book() {
+    }
+
+    private Book(Parcel in) {
+        this.rating = in.readParcelable(Rating.class.getClassLoader());
+        this.author = (ArrayList<String>) in.readSerializable();
+        this.pubdate = in.readString();
+        this.images = in.readParcelable(Images.class.getClassLoader());
+        this.publisher = in.readString();
+        this.title = in.readString();
+    }
+
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
+        public Book createFromParcel(Parcel source) {
+            return new Book(source);
+        }
+
+        public Book[] newArray(int size) {
+            return new Book[size];
+        }
+    };
 }
